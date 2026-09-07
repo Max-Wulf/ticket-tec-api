@@ -1,0 +1,85 @@
+<main class="container">
+  <section class="professional-panel" aria-labelledby="professional-name">
+    <span class="category">Kinesiología</span>
+    <h1 id="professional-name">Lic. Martín Suárez</h1>
+    <p>Lunes a viernes, de 10:00 a 18:00.</p>
+  </section>
+
+  <h2>Servicios disponibles</h2>
+  <p class="subtitle">Encontrá el servicio para tu próximo turno.</p>
+
+  <section class="services-grid" aria-label="Servicios">
+    {{!-- Recorre los servicios recibidos desde el backend --}}
+    {{#each services}}
+
+  {{!-- Solo muestra servicios disponibles, recorre los servicios y trae los datos de los servicios --}}
+      <article class="service-card">
+        <span class="category">{{category}}</span>
+
+        <h2>{{name}}</h2>
+        <p class="description">{{description}}</p>
+
+        <p class="price">${{price}}</p>
+        <p class="duration">Duración: {{duration}} minutos</p>
+
+        {{#if availability}}
+          <span class="status available">Disponible</span>
+          <button
+            type="button"
+            class="service-booking-trigger"
+            data-service-id="{{_id}}"
+            aria-label="Reservar {{name}}"
+            aria-haspopup="dialog"
+            aria-controls="booking-dialog"
+          >Reservar turno <span aria-hidden="true">→</span></button>
+        {{else}}
+          <span class="status unavailable">No disponible</span>
+        {{/if}}
+      </article>
+    {{else}}
+      <p>No hay servicios para mostrar.</p>
+    {{/each}}
+  </section>
+<!-- Dialog nativo que funciona como modal para crear una reserva -->
+  <dialog id="booking-dialog" class="booking-panel" aria-labelledby="booking-title">
+    <button type="button" id="booking-close" class="booking-close" aria-label="Cerrar reserva">Cerrar ✕</button>
+    <h2 id="booking-title">Reservá tu turno</h2>
+    <p>Lic. Martín Suárez — Kinesiología</p>
+    <p>Lunes a viernes, de 10:00 a 18:00.</p>
+
+    <form id="booking-form">
+      <label for="booking-service">Servicio</label>
+      <select id="booking-service" name="service" required>
+        <option value="">Seleccioná un servicio</option>
+        {{#each services}}
+          {{#if availability}}
+          <option value="{{_id}}">{{name}}</option>
+          {{/if}}
+        {{/each}}
+      </select>
+
+      <label for="booking-date">Fecha</label>
+      <input id="booking-date" name="date" type="date" required>
+
+      <label for="booking-time">Horario disponible</label>
+      <select id="booking-time" name="time" required disabled>
+        <option value="">Primero elegí servicio y fecha</option>
+      </select>
+
+      <label for="client-name">Tu nombre</label>
+      <input
+        id="client-name"
+        name="clientName"
+        type="text"
+        autocomplete="name"
+        required
+      >
+
+      <button type="submit" disabled>Reservar turno</button>
+      <p id="booking-message" role="status"></p>
+    </form>
+  </dialog>
+</main>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/home.js"></script>
