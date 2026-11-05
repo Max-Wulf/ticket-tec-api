@@ -1,20 +1,42 @@
 import express from "express";
-import handlebars from "express-handlebars";
-import serviceRouter from "./routes/services.router.js";
-import bookingRouter from "./routes/booking.router.js";
-import viewsRouter from "./routes/views.router.js";
+import cookieParser from "cookie-parser";
+import passport from "passport";
+
+import { logger } from "./middlewares/log.js";
+import { errorHandler } from "./middlewares/error.middleware.js";
+
+import initializePassport from "./config/passport.config.js";
+
+import sessionRouter from "./routes/sessions.router.js";
+import eventsRouter from "./routes/event.router.js";
+import categoriesRouter  from "./routes/category.router.js";
+import usersRouter from "./routes/users.router.js";
+import ticketRouter from "./routes/tickets.router.js"
+
+
 
 export const app = express();
 
-app.engine("handlebars", handlebars.engine());
-app.set("views", "./src/views");
-app.set("view engine", "handlebars");
+// Registramos las estrategias de Passport
+initializePassport();
 
+// Middlewares generales
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static("./src/public"));
+app.use(logger);
+app.use(cookieParser());
 
-app.use("/", viewsRouter);
+// Inicializamos Passport
+app.use(passport.initialize());
 
-app.use("/api/services", serviceRouter);
-app.use("/api/bookings", bookingRouter);
+// Rutas
+app.use("/api/sessions", sessionRouter);
+app.use("/api/events", eventsRouter);
+app.use("/api/categories", categoriesRouter);
+app.use("/api/users",usersRouter);
+app.use("/api/tickets", ticketRouter);
+
+// Manejador global de errores
+app.use(errorHandler);
+
+export default app;
