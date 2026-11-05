@@ -395,3 +395,4 @@ También se prevé incorporar el cambio de contraseña y la autenticación media
 ## Seguridad de la configuración
 
 `.gitignore` excluye `node_modules/`, `.env` y `.env.*`, y permite `.env.example`. Conservar credenciales únicamente en la configuración local o en el sistema de secretos del despliegue.
+# ticket-tec-api
