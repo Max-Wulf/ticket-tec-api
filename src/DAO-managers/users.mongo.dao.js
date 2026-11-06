@@ -1,4 +1,4 @@
-import { userModel } from "../models/user.model.js"
+import { userModel } from "../models/user.model.js";
 
 export class usersMongoDao {
     constructor() {
@@ -11,6 +11,14 @@ export class usersMongoDao {
 
     async getById(id) {
         return await this.model.findById(id);
+    }
+
+    async getByEmail(email) {
+        return await this.model.findOne({ email });
+    }
+
+    async create(userData) {
+        return await this.model.create(userData);
     }
 
     async updateRole(id, role) {

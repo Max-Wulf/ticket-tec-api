@@ -1,7 +1,7 @@
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import {Strategy as JwtStrategy} from "passport-jwt";
-import { userModel } from "../models/user.model.js";
+import { usersRepository } from "../repositories/user.repository.js";
 import { hashPassword, isValidPassword } from "../utils/password.utils.js";
 
 const initializePassport = () => {
@@ -39,9 +39,7 @@ const initializePassport = () => {
                     }
                     const normalizedEmail = email.toLowerCase().trim();
 
-                    const userExists = await userModel.findOne({
-                        email: normalizedEmail
-                    });
+                    const userExists = await usersRepository.getByEmail(normalizedEmail);
 
                     if (userExists) {
                         return done(null, false, {
@@ -57,7 +55,7 @@ const initializePassport = () => {
 
                     const hashedPassword = await hashPassword(password);
 
-                    const newUser = await userModel.create({
+                    const newUser = await usersRepository.create({
                         first_name,
                         last_name,
                         email: normalizedEmail,
@@ -93,9 +91,7 @@ const initializePassport = () => {
 
                     const normalizedEmail = email.toLowerCase().trim();
 
-                    const user = await userModel.findOne({
-                        email: normalizedEmail
-                    });
+                    const user = await usersRepository.getByEmail(normalizedEmail);
 
                     if (!user) {
                         return done(null, false, {
@@ -139,7 +135,7 @@ const initializePassport = () => {
             },
             async (jwtPayload, done) => {
                 try {
-                    const user= await userModel.findById(jwtPayload.id);
+                    const user = await usersRepository.getById(jwtPayload.id);
 
                     if (!user) {
                         return done(null, false, {

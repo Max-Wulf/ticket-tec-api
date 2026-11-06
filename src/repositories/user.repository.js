@@ -1,4 +1,4 @@
-import { usersMongoDao } from "../DAO-managers/users.mongo.dao.js"
+import { usersMongoDao } from "../DAO-managers/users.mongo.dao.js";
 
 export class UserRepository {
     constructor(dao) {
@@ -11,6 +11,14 @@ export class UserRepository {
 
     async getById(id) {
         return await this.dao.getById(id);
+    }
+
+    async getByEmail(email) {
+        return await this.dao.getByEmail(email);
+    }
+
+    async create(userData) {
+        return await this.dao.create(userData);
     }
 
     async updateRole(id, role) {
