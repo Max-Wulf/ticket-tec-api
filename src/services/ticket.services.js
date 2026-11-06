@@ -278,7 +278,7 @@ export class TicketService {
         }
     }
     
-    async cancel(userId, ticketId) {
+    async cancel(userId, ticketId, userRole) {
 
         if (!mongoose.isObjectIdOrHexString(userId)) {
             const error = new Error("ID de usuario inválido");
@@ -308,12 +308,15 @@ export class TicketService {
                     throw error;
                 }
 
-                if (ticket.user.toString() !== userId.toString()) {
+                const isOwner = ticket.user.toString() === userId.toString();
+                const isAdmin = userRole === "admin";
+
+                if (!isOwner && !isAdmin) {
                     const error = new Error("Ticket no encontrado");
                     error.statusCode = 404;
                     throw error;
                 }
-
+                
                 if (ticket.status !== "reserved") {
                     const error = new Error("El ticket no está reservado");
                     error.statusCode = 409;

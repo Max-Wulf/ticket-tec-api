@@ -50,32 +50,44 @@ export const confirmTicket = async (req , res, next) => {
 };
 
 export const cancelTicket = async (req, res, next) => {
-     try{
-        const {ticketId} = req.params;
+    try {
+        const { ticketId } = req.params;
         const userId = req.user._id;
-        const ticket= await ticketService.cancel (
-            userId, ticketId
+        const userRole = req.user.role;
+
+        const ticket = await ticketService.cancel(
+            userId,
+            ticketId,
+            userRole
         );
-        return res.status(200).json ({
+
+        return res.status(200).json({
             success: true,
             payload: ticketDTO(ticket)
         });
-    } catch (error){
-        next(error)
+    } catch (error) {
+        next(error);
     }
 };
 
-export const reserveTicket = async (req, res, next)=> {
-     try{
+export const reserveTicket = async (req, res, next) => {
+    try {
         const userId = req.user._id;
-        const ticket= await ticketService.reserve (
-            userId, req.body
-        );
-        return res.status(201).json ({
+
+        const data = {
+            ...req.body,
+            ...(req.params.eid
+                ? { eventId: req.params.eid }
+                : {})
+        };
+
+        const ticket = await ticketService.reserve(userId, data);
+
+        return res.status(201).json({
             success: true,
             payload: ticketDTO(ticket)
         });
-    } catch (error){
-        next(error)
+    } catch (error) {
+        next(error);
     }
-}
+};

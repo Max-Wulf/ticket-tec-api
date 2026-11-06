@@ -1,6 +1,7 @@
 import { Router } from "express";
 import passport from "passport";
 import { getEvents, getEventById, createEvent, updateEvent, updateEventStatus, deleteEvent, getEventTickets } from "../controllers/events.controller.js";
+import { reserveTicket } from "../controllers/tickets.controller.js";
 import { authorizeRoles } from "../middlewares/auth.middleware.js";
 import { authEventOwner } from "../middlewares/eventOwner.middleware.js";
 
@@ -46,7 +47,16 @@ router.delete(
     passport.authenticate ("current", {session: false}),
     authorizeRoles ("organizer", "admin"),
     authEventOwner,
-    deleteEvent);
+    deleteEvent
+);
+
+router.post(
+    "/:eid/tickets",
+    passport.authenticate("current", { session: false }),
+    reserveTicket
+);
+
+
 
 
 
